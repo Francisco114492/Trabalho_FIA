@@ -3,8 +3,19 @@ import pygame
 from ui.core.ui_item import UiItem
 
 class ColapseButton(UiItem):
-    def __init__(self, x, y, width, height, name=None, options=None, open=False, default_text="Selecione...    ↘", side = 'below', max_visible=5, font_size = 24):
-        super().__init__(x, y, width, height, name)
+    def __init__(self,
+    x, y, width, height,
+    name=None,
+    options=None,
+    open=False,
+    default_text="Select...    ↘",
+    side = 'below',
+    max_visible=5,
+    font_size = 24,
+    active = True
+    ):
+
+        super().__init__(x, y, width, height, name, active)
         self.open = open
         self.choice = None
         self.options = options if options else {}
@@ -48,7 +59,7 @@ class ColapseButton(UiItem):
         # Calcular opções visíveis
         visible_items = list(self.options.items())[self.scroll_offset:self.scroll_offset + self.max_visible]
 
-        for i, (name, desc) in enumerate(visible_items):
+        for i, (name, object) in enumerate(visible_items):
             y_pos = base_y + i * self.option_height
             option_rect = pygame.Rect(base_x, y_pos, self.rect.width, self.option_height)
             color = (100, 100, 250) if option_rect.collidepoint(mouse_pos) else (50, 50, 150)
@@ -56,7 +67,10 @@ class ColapseButton(UiItem):
             option_text = self.font.render(name, True, (255, 255, 255))
             screen.blit(option_text, (option_rect.x + 5, y_pos + 5))
             if option_rect.collidepoint(mouse_pos):
-                hover_desc = desc
+                if hasattr(object, 'description'):
+                    hover_desc = object.description
+                else:
+                    hover_desc = object
 
         # Mostrar descrição
         if hover_desc:

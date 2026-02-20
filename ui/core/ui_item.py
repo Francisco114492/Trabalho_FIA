@@ -1,10 +1,15 @@
+# ui/core/ui_item
+
+from abc import abstractmethod, ABC
 import pygame
 
-class UiItem:
+
+class UiItem(ABC):
     _counter = 0
-    def __init__(self, x, y, width, height, name=None, visible = True):
+    def __init__(self, x, y, width, height, name=None, visible = True, active = True):
         self.rect = pygame.Rect(x, y, width, height)
         self.visible = visible
+        self.active = active
         if name is None:
             # uses class name to create a unique name if not provided
             cls = self.__class__
@@ -19,6 +24,14 @@ class UiItem:
         attrs = ", ".join(f"{k}={v!r}" for k, v in self.__dict__.items())
         return f"{self.__class__.__name__}({attrs})"
     
-    def draw_img(self, screen):
-        if not self.visible:
-            return
+    @abstractmethod
+    def draw(self, screen):
+        pass
+
+    @abstractmethod
+    def handle_event(self, event):
+        pass
+        # """Processar input. Override nos filhos."""
+        # if not self.active or not self.visible:
+        #     return False
+        # raise NotImplementedError("handle_event deve ser implementado pelo filho.")

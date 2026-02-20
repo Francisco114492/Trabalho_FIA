@@ -4,8 +4,8 @@ from ui.core.ui_item import UiItem
 
 
 class Slider(UiItem):
-    def __init__(self, x, y, width, name=None, min_val=0, max_val=1, start_val=0.5, step=0.01, visible=True, font_size = 24):
-        super().__init__(x, y, width, 10, name, visible)
+    def __init__(self, x, y, width, name=None, min_val=0, max_val=1, start_val=0.5, step=0.01, visible=True, font_size = 24, active = True):
+        super().__init__(x, y, width, 10, name, visible, active)
         self.min_val = min_val
         self.max_val = max_val
         self.step = step

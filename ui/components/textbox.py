@@ -5,14 +5,13 @@ from ui.core.ui_item import UiItem
 
 
 class TextBox(UiItem):
-    def __init__(self, x, y, width, height, name=None, font_size=24, max_chars=20, default_text='', visible=True):
-        super().__init__(x, y, width, height, name, visible)
+    def __init__(self, x, y, width, height, name=None, font_size=24, max_chars=20, default_text='', visible=True, active = True):
+        super().__init__(x, y, width, height, name, visible, active)
         self.color_inactive = (200, 200, 200)
         self.color_active = (255, 255, 255)
         self.color_border = (100, 100, 255)
         self.font = pygame.font.SysFont("Arial", font_size)
         self.text = ''
-        self.active = False
         self.cursor_visible = True
         self.last_cursor_toggle = time.time()
         self.max_chars = max_chars

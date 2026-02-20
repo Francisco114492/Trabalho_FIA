@@ -3,6 +3,7 @@ from ui.core.ui_item import UiItem
 
 class Menu:
     def __init__(self, screen, font, x, y, width, height, visible):
+        self.rect = pygame.Rect(x, y, width, height)
         self.screen = screen
         self.font = font
         self.visible: bool = visible

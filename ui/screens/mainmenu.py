@@ -1,26 +1,26 @@
 import pygame
 
 from ui.core.ui_menu import Menu
+
+from cars.car_base import CarBase
+from tracks.track_utils import TrackData
 from neural_networks.neural_network import NeuralNetwork
+
 from ui.components.collapse_button import ColapseButton
 from ui.components.textbox import TextBox, HiddenLayersTextbox, NumericTextbox
 from ui.components.button import Button
 from ui.components.slider import Slider
-from cars.car_base import CarBase
-from tracks.track_utils import Track
 
-
-BRANCO = (255, 255, 255)
-PRETO = (0, 0, 0)
-CINZENTO = (200, 200, 200)
-AZUL_CLARO = (100, 150, 200)
+from ui.utils import themes
+from ui.utils import fonts
 
 class MainMenu(Menu):
-    def __init__(self, screen, font, x, y, width, height, visible=True):
+    def __init__(self, screen, font, x, y, width, height, visible=True, theme="light"):
         super().__init__(screen, font, x, y, width, height, visible)
+        self.color_schema = themes.get_theme(theme)
         self.visible = True
 
-        self.title_surface = font.render('AI Game', True, PRETO)
+        self.title_surface = font.render('AI Game', True, self.color_schema.text)
         self.title_pos = ((screen.get_width() - self.title_surface.get_width()) // 2,
                           self.title_surface.get_height() + 20)
 
@@ -28,34 +28,37 @@ class MainMenu(Menu):
         self.car = None
         self.nn = None
 
-        nn_list, nn_dict = NeuralNetwork.get_available_networks()
+        _, nn_dict = NeuralNetwork.get_available_networks()
         nn_colapsebutton = ColapseButton(
             90, 90, 200, 60, 
             name="nn_colapsebutton",
             options=nn_dict,
             side = 'front',
             default_text='Selecione uma rede neural: ',
-            font_size = 19
+            font_size = 19,
+            active=True
             )
 
-        car_list, car_dict = CarBase.get_available_cars()
+        _, car_dict = CarBase.get_available_cars()
         car_colapsebutton = ColapseButton(
             90, 180, 200, 60, 
             name="car_colapsebutton", 
             options=car_dict,
             side = 'front',
             default_text='Selecione um carro: ',
-            font_size = 20
+            font_size = 20,
+            active=True
             )
 
-        tracks_list, tracks_dict = Track.get_tracks()
+        _, tracks_dict = TrackData.get_tracks()
         track_colapsebutton = ColapseButton(
-            90, 270, 200, 60, 
-            name = 'track_colapsebutton', 
+            90, 270, 200, 60,
+            name = 'track_colapsebutton',
             options=tracks_dict,
             side = 'front',
             default_text='Selecione uma pista:',
-            font_size = 20
+            font_size = 20,
+            active=True
             )
         
         alfa_textbox = NumericTextbox(
@@ -63,7 +66,8 @@ class MainMenu(Menu):
             name = 'alfa_textbox',
             font_size = 24,
             default_text = 'Alfa: 0.1',
-            visible = False
+            visible = False,
+            active=True
         )
 
         mutation_rate_slider = Slider(
@@ -72,7 +76,8 @@ class MainMenu(Menu):
             min_val = 0.01,
             max_val = 1.0,
             start_val = 0.15,
-            visible = False
+            visible = False,
+            active=True
         )
         
         start_sim_button = Button(
@@ -91,7 +96,7 @@ class MainMenu(Menu):
     def draw(self):
         if not self.visible:
             return
-        self.surface.fill(AZUL_CLARO)
+        self.surface.fill(self.color_schema.background)
         self.surface.blit(self.title_surface, self.title_pos)
                 # Primeiro, desenha os botões fechados
         for item in self.items:
@@ -107,7 +112,7 @@ class MainMenu(Menu):
         nn_colapsebutton_choice = self.get_item('nn_colapsebutton').choice
         track_colapsebutton_choice = self.get_item('track_colapsebutton').choice
 
-        if not nn_colapsebutton_choice == None:
+        if nn_colapsebutton_choice is not None:
             nn_class = NeuralNetwork.get_nn(nn_colapsebutton_choice)
             nn = nn_class([1,1,1])
             alfa_textbox = self.get_item('alfa_textbox')
@@ -115,12 +120,12 @@ class MainMenu(Menu):
                 alfa_textbox.visible = hasattr(nn, "alfa")
                 alfa_textbox.text = str(nn.alfa) 
             
-        if not car_colapsebutton_choice == None:
-            car = CarBase.get_cars(car_colapsebutton_choice)
+        if car_colapsebutton_choice is not None:
+            self.car = CarBase.get_car(car_colapsebutton_choice)
             self.get_item('mutation_rate_slider').visible = True
 
-        if not (nn_colapsebutton_choice == None or car_colapsebutton_choice == None or track_colapsebutton_choice == None):
-            self.track = Track.get_track(track_colapsebutton_choice)  
+        if not (nn_colapsebutton_choice is None or car_colapsebutton_choice is None or track_colapsebutton_choice is None):
+            self.track = self.get_item('track_colapsebutton').options[track_colapsebutton_choice]
             self.car = CarBase.get_car(track_colapsebutton_choice) 
             self.nn = NeuralNetwork.get_nn(track_colapsebutton_choice) 
             self.get_item('start_sim_button').active = True
