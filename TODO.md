@@ -22,6 +22,14 @@ Ao selecionar um ponto (com botão esquerdo), dá "lock" nesse ponto.
 Depois de dar "lock", deixa rodar para escolher um ângulo.
 A seguir deixa criar um txt com os dados.
 
+`` Ideias Bogdan``
+
+Fazer um modelo visual decente dos carros (deixar de ser um trangulo e passar a um retangulo ou png importado para custom models);
+Dar massa, inercia e fricção aos carros;
+Ter possiblidade de alterar a massa, potencia (power curve), marcha (e coeficiente de arrasto?)
+Ter optimal line mais refinada para ter a eficiencia da condução da AI
+
+
 
 ``Next steps:``
     1 - tracks
